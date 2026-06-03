@@ -45,8 +45,11 @@ public class Book extends LibraryItem implements Borrowable {
     }
 
     @Override
-    public void borrow() {
-
+    public void borrow(Member memberById, String borrowedAt) {
+        BorrowedRecord br=new BorrowedRecord();
+        br.setBook(this);
+        br.setBorrowedAt(borrowedAt);
+        this.available=false;
     }
 
     @Override

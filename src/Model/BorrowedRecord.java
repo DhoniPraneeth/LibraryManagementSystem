@@ -5,7 +5,7 @@ import java.util.Date;
 public class BorrowedRecord {
     public Book book;
     public Member member;
-    public Date borrowedAt;
+    public String borrowedAt;
 
     public Book getBook() {
         return book;
@@ -23,21 +23,21 @@ public class BorrowedRecord {
         this.member = member;
     }
 
-    public Date getBorrowedAt() {
+    public String getBorrowedAt() {
         return borrowedAt;
     }
 
-    public void setBorrowedAt(Date borrowedAt) {
+    public void setBorrowedAt(String borrowedAt) {
         this.borrowedAt = borrowedAt;
     }
 
-    public Date getReturnedAt() {
+    public String getReturnedAt() {
         return returnedAt;
     }
 
-    public void setReturnedAt(Date returnedAt) {
+    public void setReturnedAt(String returnedAt) {
         this.returnedAt = returnedAt;
     }
 
-    public Date returnedAt;
+    public String returnedAt;
 }

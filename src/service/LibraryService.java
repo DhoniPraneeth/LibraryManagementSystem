@@ -1,10 +1,9 @@
 package service;
 
-import Model.BorrowRequest;
-import Model.Book;
-import Model.LibraryItem;
-import Model.Member;
+import Model.*;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class LibraryService {
@@ -39,11 +38,11 @@ public class LibraryService {
         return libraryItems.list;
     }
 
-    public void getAvailableBooks() {
+    public List<LibraryItem> getAvailableBooks() {
         List<LibraryItem> res=libraryItems.list.stream()
                 .filter(x->((Book)x).isAvailable())
                 .toList();
-        res.forEach(x-> System.out.println(x));
+        return res;
     }
 
     public void sortByTitle() {
@@ -67,5 +66,44 @@ public class LibraryService {
 
     public boolean validateMember(String memberId) {
         return members.containsKey(memberId);
+    }
+
+    public Book getBookByTitle(String title,List<LibraryItem> itemList) {
+        for(LibraryItem item: itemList){
+            if(item.getName().equals(title)){
+                System.out.println("got it");
+                return (Book)item;
+            }
+        }
+        return null;
+    }
+
+    public Member getMemberById(String memberId) {
+        return members.get(memberId);
+    }
+
+    public void borrow(String memberId, Book b) {
+        Member member=members.get(memberId);
+        LocalDate date=LocalDate.now();
+        DateTimeFormatter formatter =
+                DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        String time=date.format(formatter);
+        if(b!=null){
+            BorrowedRecord br=new BorrowedRecord();
+            br.setBorrowedAt(time);
+            br.setBook(b);
+            br.setMember(member);
+            List<BorrowedRecord> l=member.getBooks();
+            l.add(br);
+            member.setBooks(l);
+            b.setAvailable(false);
+        }else{
+            System.out.println("The item is borrowed by someone when it is available we notify you :)");
+            BorrowRequest br=new BorrowRequest();
+            br.setBook(b);
+            br.setMember(member);
+            br.setRequestedAt(time);
+            bQueue.add(br);
+        }
     }
 }

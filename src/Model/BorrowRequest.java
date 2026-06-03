@@ -5,7 +5,7 @@ import java.util.Date;
 public class BorrowRequest {
     public Member member;
     public Book book;
-    public Date requestedAt;
+    public String requestedAt;
 
     public Member getMember() {
         return member;
@@ -23,11 +23,11 @@ public class BorrowRequest {
         this.book = book;
     }
 
-    public Date getRequestedAt() {
+    public String getRequestedAt() {
         return requestedAt;
     }
 
-    public void setRequestedAt(Date requestedAt) {
+    public void setRequestedAt(String requestedAt) {
         this.requestedAt = requestedAt;
     }
 }
