@@ -1,6 +1,7 @@
 package service;
 
 import Model.*;
+import utils.DateFormatter;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -11,6 +12,18 @@ public class LibraryService {
     Map<String, Member> members;
     Set<String> set;
     Queue<BorrowRequest> bQueue;
+    DateFormatter date;
+
+    @Override
+    public String toString() {
+        return "\nLibraryItems=\n" + libraryItems +"\n"+
+                "\nMembers=\n" + members +"\n"+
+                "\nSet=\n" + set +"\n"+
+                "\nBQueue=\n" + bQueue +"\n"+
+                "\nSearchResult=\n" + searchResult +"\n"+
+                '\n';
+    }
+
     SearchResult<Book> searchResult;
     public LibraryService() {
         this.libraryItems = new LibraryCatalog<>();
@@ -18,6 +31,7 @@ public class LibraryService {
         this.set = new HashSet<>();
         this.bQueue = new ArrayDeque<>();
         this.searchResult=new SearchResult<>();
+        this.date=new DateFormatter();
     }
     public Book add(String id, String bName, String genre, String author, String isbn, Boolean available) {
         Book item=new Book();
@@ -27,7 +41,7 @@ public class LibraryService {
         item.setId(id);
         item.setIsbn(isbn);
         item.setAvailable(available);
-        libraryItems.list.add(item);
+        libraryItems.add(item);
        // libraryItems.list.forEach(x->System.out.println(x));
         return item;
     }
@@ -35,18 +49,19 @@ public class LibraryService {
         return searchResult.searchByAuthor(author,libraryItems);
     }
     public List<LibraryItem> getBooks(){
-        return libraryItems.list;
+        return libraryItems.getAll();
     }
 
-    public List<LibraryItem> getAvailableBooks() {
-        List<LibraryItem> res=libraryItems.list.stream()
-                .filter(x->((Book)x).isAvailable())
+    public List<Book> getAvailableBooks() {
+        return libraryItems.getAll().stream()
+                .filter(x->x instanceof Book)
+                .map(x->(Book)x)
+                .filter(x->x.isAvailable())
                 .toList();
-        return res;
     }
 
     public void sortByTitle() {
-        libraryItems.list.stream()
+        libraryItems.getAll().stream()
                 .sorted(Comparator.comparing(LibraryItem::getName))
                 .toList()
                 .forEach(x-> System.out.println(x));
@@ -68,14 +83,8 @@ public class LibraryService {
         return members.containsKey(memberId);
     }
 
-    public Book getBookByTitle(String title,List<LibraryItem> itemList) {
-        for(LibraryItem item: itemList){
-            if(item.getName().equals(title)){
-                System.out.println("got it");
-                return (Book)item;
-            }
-        }
-        return null;
+    public Book searchByTitle(String title) {
+        return (Book)searchResult.searchByTitle(title,libraryItems).getFirst();
     }
 
     public Member getMemberById(String memberId) {
@@ -84,10 +93,7 @@ public class LibraryService {
 
     public void borrow(String memberId, Book b) {
         Member member=members.get(memberId);
-        LocalDate date=LocalDate.now();
-        DateTimeFormatter formatter =
-                DateTimeFormatter.ofPattern("dd-MM-yyyy");
-        String time=date.format(formatter);
+        String time= date.getDate();
         if(b!=null){
             BorrowedRecord br=new BorrowedRecord();
             br.setBorrowedAt(time);
@@ -104,6 +110,22 @@ public class LibraryService {
             br.setMember(member);
             br.setRequestedAt(time);
             bQueue.add(br);
+        }
+    }
+
+    public void returnBook(String memId, String title) {
+        Member member=members.get(memId);
+        member.getBooks().remove(title);
+        String returnedAt= date.getDate();
+        Book b= (Book) searchResult.searchByTitle(title,libraryItems);
+        b.setAvailable(true);
+        List<BorrowedRecord> borRecords= member.getBooks();
+        BorrowedRecord record;
+        for(BorrowedRecord temp:borRecords){
+            if(temp.getBook().equals(title)){
+                temp.setReturnedAt(returnedAt);
+                break;
+            }
         }
     }
 }

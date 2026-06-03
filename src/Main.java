@@ -20,7 +20,8 @@ public class Main {
         service.addMember("100","Praneeth","xyz123@gmail.com");
         service.addMember("101","Sai","abc456@gmail.com");
         service.addMember("103","Chandu","pqr789@gmail.com");
-        while(true){
+        boolean check=true;
+        while(check){
             System.out.println("Enter your input");
             String in=r.nextLine();
             switch(in){
@@ -28,7 +29,8 @@ public class Main {
                                     service.getBooks().forEach(z-> System.out.println(z));
                                     break;
                 case "2":   System.out.println("\n---Search By Author---");
-                            service.searchByAuthor("Paulo Coelho").forEach(x-> System.out.println(x));
+                            String author =r.nextLine();
+                            service.searchByAuthor(author).forEach(x-> System.out.println(x));
                             break;
                 case "3":   System.out.println("\n---Available Books---");
                             service.getAvailableBooks().forEach(x-> System.out.println(x));;
@@ -45,7 +47,7 @@ public class Main {
                             if(service.validateMember(memberId)){
                                 System.out.println("Enter your Book Title");
                                 String title=r.nextLine();
-                                Book b=service.getBookByTitle(title,service.getAvailableBooks());
+                                Book b=service.searchByTitle(title);
                                 System.out.println(b);
                                 System.out.println();
                                 service.borrow(memberId,b);
@@ -53,8 +55,16 @@ public class Main {
                                 System.out.println("Member Not exist.Please Register");
                             }
                             break;
-
+                case "7":   System.out.println("Enter ur member id:");
+                            String memId=r.nextLine();
+                            String title=r.nextLine();
+                            if(service.validateMember(memId)) {
+                                service.returnBook(memId, title);
+                            }else
+                                System.out.println("Member Not exist.Please Register");
+                default:    check=false;
             }
         }
+        System.out.println(service);
     }
 }

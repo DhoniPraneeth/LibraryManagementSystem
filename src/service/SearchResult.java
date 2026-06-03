@@ -10,9 +10,19 @@ public class SearchResult<T>{
     List<LibraryItem> results=new ArrayList<>();
     String query;
     public List<LibraryItem> searchByAuthor(String author,LibraryCatalog<LibraryItem> items){
-        results= (List<LibraryItem>) items.list.stream()
-                                        .filter(x->((Book)x).getAuthor().equals(author))
-                                        .toList();
-        return results;
+        return  items.getAll().stream()
+                            .filter(x->x instanceof Book && ((Book)x).getAuthor().equals(author))
+                            .toList();
+    }
+    public List<LibraryItem> searchByTitle(String title,LibraryCatalog<LibraryItem> items){
+        return  items.getAll().stream()
+                .filter(x->x instanceof Book && ((Book)x).getName().equals(title))
+                .toList();
+    }
+
+    public List<LibraryItem> searchById(String itemId,LibraryCatalog<LibraryItem> items) {
+        return items.getAll().stream()
+                .filter(x->x instanceof Book && ((Book)x).getId().equals(itemId))
+                .toList();
     }
 }
