@@ -1,3 +1,6 @@
+import LibraryException.BookNotAvailableException;
+import LibraryException.BookNotFoundException;
+import LibraryException.MemberNotFoundException;
 import Model.Book;
 import service.LibraryService;
 
@@ -8,7 +11,7 @@ import java.util.Scanner;
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws MemberNotFoundException, BookNotAvailableException {
         Scanner r=new Scanner(System.in);
         LibraryService service=new LibraryService();
         service.add("1", "The Alchemist", "Fiction", "Paulo Coelho", "9780062315007", true);
@@ -55,11 +58,13 @@ public class Main {
                                 System.out.println("Enter your Book Title");
                                 String title=r.nextLine();
                                 Book b=service.searchByTitle(title);
-                                System.out.println(b);
-                                System.out.println();
-                                service.borrow(memberId,b);
+                                if(b==null){
+                                    throw new BookNotFoundException("Book Not Found in our Library :)");
+                                }else {
+                                    service.borrow(memberId, b);
+                                }
                             }else{
-                                System.out.println("Member Not exist.Please Register");
+                                throw new MemberNotFoundException("Member doesn't exist with"+memberId+"");
                             }
                             break;
                 case "7":   System.out.println("Enter ur member id:");
@@ -68,7 +73,7 @@ public class Main {
                             if(service.validateMember(memId)) {
                                 service.returnBook(memId, title);
                             }else {
-                                System.out.println("Member Not exist.Please Register");
+                                throw new MemberNotFoundException("Member doesn't exist with"+memId+"");
                             }
                             break;
                 default:    check=false;

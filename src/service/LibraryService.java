@@ -1,5 +1,6 @@
 package service;
 
+import LibraryException.BookNotAvailableException;
 import Model.*;
 import utils.DateFormatter;
 
@@ -91,10 +92,10 @@ public class LibraryService {
         return members.get(memberId);
     }
 
-    public void borrow(String memberId, Book b) {
+    public void borrow(String memberId, Book b) throws BookNotAvailableException {
         Member member=members.get(memberId);
         String time= date.getDate();
-        if(b!=null){
+        if(b.isAvailable()){
             BorrowedRecord br=new BorrowedRecord();
             br.setBorrowedAt(time);
             br.setBook(b);
@@ -104,12 +105,12 @@ public class LibraryService {
             member.setBooks(l);
             b.setAvailable(false);
         }else{
-            System.out.println("The item is borrowed by someone when it is available we notify you :)");
             BorrowRequest br=new BorrowRequest();
             br.setBook(b);
             br.setMember(member);
             br.setRequestedAt(time);
             bQueue.add(br);
+            throw new BookNotAvailableException("Book was not Available :)");
         }
     }
 
