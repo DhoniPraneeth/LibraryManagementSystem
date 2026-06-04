@@ -23,6 +23,13 @@ public class Main {
         boolean check=true;
         while(check){
             System.out.println("Enter your input");
+            System.out.println("Enter 1:Books in Library");
+            System.out.println("Enter 2:Search By Author");
+            System.out.println("Enter 3:Available Books");
+            System.out.println("Enter 4:Sorted List Items By Title");
+            System.out.println("Enter 5:Memebers");
+            System.out.println("Enter 6:Need to borrow a book");
+            System.out.println("Enter 7:Want to return book");
             String in=r.nextLine();
             switch(in){
                 case "1":   System.out.println("\n---Books in Library Catalog---");
@@ -60,11 +67,13 @@ public class Main {
                             String title=r.nextLine();
                             if(service.validateMember(memId)) {
                                 service.returnBook(memId, title);
-                            }else
+                            }else {
                                 System.out.println("Member Not exist.Please Register");
+                            }
+                            break;
                 default:    check=false;
             }
         }
-        System.out.println(service);
+       // System.out.println(service);
     }
 }
